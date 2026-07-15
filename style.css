@@ -43,25 +43,18 @@ body {
   text-align: center;
 }
 
-/* スマホ用（画面幅600px以下） */
-@media (max-width: 600px) {
-  body {
-    font-size: 20px;
-  }
+#score {
+  font-size: 4vw;
+}
 
-  #score {
-    font-size: 22px;
-  }
+#ranking {
+  font-size: 4vw;
+}
 
-  #ranking {
-    font-size: 20px;
-  }
+#startBtn {
+  font-size: 5vw;
+}
 
-  #startBtn {
-    font-size: 24px;
-  }
-
-  #nickname {
-    font-size: 22px;
-  }
+#nickname {
+  font-size: 4.5vw;
 }
