@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>爆弾回避ゲーム</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>爆弾回避ゲーム</h1>
+  <canvas id="gameCanvas"></canvas>
+  <p id="score">生存時間: 0 秒</p>
+  <div id="startScreen">
+  <input id="nickname" type="text" placeholder="ニックネームを入力">
+  <button id="startBtn">スタート</button>
+  <div id="ranking"></div>
+  <button onclick="localStorage.clear()">ランキングリセット</button>
+</div>
+
+  <script src="script.js"></script>
+</body>
+
+</html>
