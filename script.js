@@ -14,7 +14,7 @@ let player = {
   x: canvas.width / 2,
   y: canvas.height - 50,
   size: 40,
-  color: "cyan",
+  color: "orange",
   invincible: false
 };
 
