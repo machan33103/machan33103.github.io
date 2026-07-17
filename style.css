@@ -57,30 +57,6 @@ body {
   z-index: 9999;
 }
 
-
-/* スマホ用（画面幅600px以下） */
-@media (max-width: 600px) {
-  body {
-    font-size: 20px;
-  }
-
-  #score {
-    font-size: 22px;
-  }
-
-  #ranking {
-    font-size: 20px;
-  }
-
-  #startBtn {
-    font-size: 24px;
-  }
-
-  #nickname {
-    font-size: 22px;
-  }
-}
-
 /* ★ スマホ向け（画面幅 600px 以下） */
 @media screen and (max-width: 600px) {
 
