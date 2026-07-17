@@ -1,4 +1,5 @@
 //#region 初期設定
+
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
@@ -14,7 +15,7 @@ let player = {
   x: canvas.width / 2,
   y: canvas.height - 50,
   size: 40,
-  color: "cyan",
+  color: "orange",
   invincible: false
 };
 
@@ -92,30 +93,31 @@ let lastPhaseTime = 0;       // 最後にフェーズが進んだ時間
 //#region スコア記録＆ランキング
 // ⭐ ランキング保存
 function saveScore(finalScore) {
-  let scores = JSON.parse(localStorage.getItem("scores") || "[]");
-
-  scores.push({ name: nickname, score: finalScore });
-
-  scores.sort((a, b) => b.score - a.score);
-  scores = scores.slice(0, 30);
-
-  localStorage.setItem("scores", JSON.stringify(scores));
+  firebase.database().ref("ranking").push({
+    name: nickname,
+    score: finalScore,
+    time: Date.now()
+  });
 }
 
-// ⭐ ランキング表示
 function displayRanking() {
-  let scores = JSON.parse(localStorage.getItem("scores") || "[]");
-  let rankingDiv = document.getElementById("ranking");
+  firebase.database().ref("ranking").once("value", snapshot => {
+    let data = snapshot.val();
+    let scores = [];
 
-  rankingDiv.innerHTML = "<h3>ランキング</h3>";
+    for (let id in data) {
+      scores.push(data[id]);
+    }
 
-  if (scores.length === 0) {
-    rankingDiv.innerHTML += "<p>まだ記録がありません</p>";
-    return;
-  }
+    scores.sort((a, b) => b.score - a.score);
+    scores = scores.slice(0, 30);
 
-  scores.forEach((item, index) => {
-    rankingDiv.innerHTML += `<p>${index + 1}位: ${item.name} - ${item.score} 点</p>`;
+    let rankingDiv = document.getElementById("ranking");
+    rankingDiv.innerHTML = "<h3>ランキング</h3>";
+
+    scores.forEach((item, index) => {
+      rankingDiv.innerHTML += `<p>${index + 1}位: ${item.name} - ${item.score} 点</p>`;
+    });
   });
 }
 
@@ -762,7 +764,7 @@ document.getElementById("startGameBtn").addEventListener("click", () => {
   x: canvas.width / 2,
   y: canvas.height - 50,
   size: 40,
-  color: "cyan",
+  color: "orange",
   invincible: false
   };
 
