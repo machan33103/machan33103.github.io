@@ -1,3 +1,39 @@
+/* ★ PC・スマホ共通の基本サイズ（大きめ） */
+body {
+  font-size: 24px;
+}
+
+button {
+  font-size: 24px;
+  padding: 14px 24px;
+  margin: 12px 0;
+  border-radius: 10px;
+}
+
+input[type="text"] {
+  font-size: 24px;
+  padding: 12px;
+  border-radius: 10px;
+}
+
+#menuScreen h1,
+#nameScreen h1,
+#rankingScreen h1 {
+  font-size: 32px;
+  text-align: center;
+}
+
+#menuScreen p,
+#nameScreen p {
+  font-size: 22px;
+  text-align: center;
+}
+
+.game-over-box {
+  font-size: 24px;
+  padding: 24px;
+}
+
 body {
   text-align: center;
   font-family: sans-serif;
@@ -18,7 +54,7 @@ body {
 
 
 #score {
-  font-size: 24px;
+  font-size: 20px;
   margin-top: 10px;
 }
 
@@ -57,66 +93,73 @@ body {
   z-index: 9999;
 }
 
-/* ★ スマホ向け（画面幅 600px 以下） */
-@media screen and (max-width: 600px) {
 
-  /* 全体の文字を大きく */
+/* スマホ用（画面幅600px以下） */
+@media (max-width: 600px) {
   body {
+    font-size: 20px;
+  }
+
+  #score {
+    font-size: 22px;
+  }
+
+  #ranking {
+    font-size: 20px;
+  }
+
+  #startBtn {
     font-size: 24px;
   }
 
-  /* タイトルを大きく */
+  #nickname {
+    font-size: 22px;
+  }
+}
+
+/* ★ スマホ向け（画面幅 600px 以下） */
+@media screen and (max-width: 600px) {
+
+  body {
+    font-size: 26px;
+  }
+
   #menuScreen h1,
   #nameScreen h1,
   #rankingScreen h1 {
-    font-size: 36px;
-    text-align: center;
-    margin-bottom: 20px;
+    font-size: 40px;
   }
 
-  /* 説明文など */
   #menuScreen p,
   #nameScreen p {
-    font-size: 22px;
-    text-align: center;
-    margin: 10px 0;
+    font-size: 26px;
   }
 
-  /* ボタンを超押しやすくする */
   button {
-    font-size: 26px;
-    padding: 18px 24px;
-    margin: 14px auto;
+    font-size: 30px;
+    padding: 20px;
     width: 90%;
-    max-width: 380px;
-    height: 60px;
-    border-radius: 12px;
-    display: block;
+    max-width: 400px;
+    height: 65px;
+    border-radius: 14px;
   }
 
-  /* ニックネーム入力欄 */
   input[type="text"] {
-    font-size: 26px;
-    padding: 16px;
+    font-size: 30px;
+    padding: 18px;
     width: 90%;
-    max-width: 380px;
-    border-radius: 10px;
-    display: block;
-    margin: 20px auto;
+    max-width: 400px;
+    border-radius: 12px;
   }
 
-  /* ゲーム画面のスコア表示 */
   #score {
-    font-size: 22px;
-    text-align: center;
-    margin-bottom: 10px;
+    font-size: 24px;
   }
 
-  /* ゲームオーバー画面のボックス */
   .game-over-box {
     width: 90%;
-    padding: 30px;
-    font-size: 26px;
+    padding: 32px;
+    font-size: 28px;
     border-radius: 16px;
   }
 }
