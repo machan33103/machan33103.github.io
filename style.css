@@ -4,6 +4,8 @@ body {
 }
 
 button {
+  width: 90%;     /* 画面幅の90%にする */
+  height: 70px;   /* 高さは固定 */
   font-size: 24px;
   padding: 14px 24px;
   margin: 12px 0;
@@ -11,6 +13,8 @@ button {
 }
 
 input[type="text"] {
+  width: 88%;     /* 画面幅の90%にする */
+  height: 45px;
   font-size: 24px;
   padding: 12px;
   border-radius: 10px;
