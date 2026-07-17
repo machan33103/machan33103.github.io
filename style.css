@@ -43,18 +43,40 @@ body {
   text-align: center;
 }
 
-#score {
-  font-size: 4vw;
+
+.phaseMessage {
+  position: fixed;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0,0,0,0.7);
+  color: white;
+  padding: 20px 40px;
+  font-size: 28px;
+  border-radius: 10px;
+  z-index: 9999;
 }
 
-#ranking {
-  font-size: 4vw;
-}
 
-#startBtn {
-  font-size: 5vw;
-}
+/* スマホ用（画面幅600px以下） */
+@media (max-width: 600px) {
+  body {
+    font-size: 20px;
+  }
 
-#nickname {
-  font-size: 4.5vw;
+  #score {
+    font-size: 22px;
+  }
+
+  #ranking {
+    font-size: 20px;
+  }
+
+  #startBtn {
+    font-size: 24px;
+  }
+
+  #nickname {
+    font-size: 22px;
+  }
 }
