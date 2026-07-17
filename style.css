@@ -60,58 +60,63 @@ body {
 /* ★ スマホ向け（画面幅 600px 以下） */
 @media screen and (max-width: 600px) {
 
-  /* 全体の文字を少し大きく */
+  /* 全体の文字を大きく */
   body {
-    font-size: 18px;
+    font-size: 24px;
   }
 
-  /* メニュー画面のタイトル */
+  /* タイトルを大きく */
   #menuScreen h1,
   #nameScreen h1,
   #rankingScreen h1 {
-    font-size: 28px;
+    font-size: 36px;
     text-align: center;
+    margin-bottom: 20px;
   }
 
   /* 説明文など */
   #menuScreen p,
   #nameScreen p {
-    font-size: 18px;
+    font-size: 22px;
     text-align: center;
+    margin: 10px 0;
   }
 
-  /* ボタンを大きく押しやすく */
+  /* ボタンを超押しやすくする */
   button {
-    font-size: 20px;
-    padding: 14px 24px;
-    margin: 10px 0;
-    width: 80%;        /* スマホでは横幅を広めに */
-    max-width: 300px;  /* でも広すぎないように */
+    font-size: 26px;
+    padding: 18px 24px;
+    margin: 14px auto;
+    width: 90%;
+    max-width: 380px;
+    height: 60px;
+    border-radius: 12px;
     display: block;
-    margin-left: auto;
-    margin-right: auto;
   }
 
   /* ニックネーム入力欄 */
   input[type="text"] {
-    font-size: 20px;
-    padding: 12px;
-    width: 80%;
-    max-width: 300px;
+    font-size: 26px;
+    padding: 16px;
+    width: 90%;
+    max-width: 380px;
+    border-radius: 10px;
     display: block;
-    margin: 10px auto;
+    margin: 20px auto;
   }
 
   /* ゲーム画面のスコア表示 */
   #score {
-    font-size: 18px;
+    font-size: 22px;
     text-align: center;
+    margin-bottom: 10px;
   }
 
   /* ゲームオーバー画面のボックス */
   .game-over-box {
-    width: 85%;
-    padding: 20px;
-    font-size: 20px;
+    width: 90%;
+    padding: 30px;
+    font-size: 26px;
+    border-radius: 16px;
   }
 }
