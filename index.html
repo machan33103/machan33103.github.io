@@ -4,6 +4,25 @@
   <meta charset="UTF-8">
   <title>爆弾回避ゲーム</title>
   <link rel="stylesheet" href="style.css">
+
+  <!-- ★ Firebase v8（非モジュール版）を読み込む -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+  <!-- ★ Firebase 初期化 -->
+  <script>
+    var firebaseConfig = {
+      apiKey: "AIzaSyA443-F3M3PITTS-7aUlyxLkrJ345iXEjw",
+      authDomain: "minigame-b29f6.firebaseapp.com",
+      databaseURL: "https://minigame-b29f6-default-rtdb.firebaseio.com",
+      projectId: "minigame-b29f6",
+      storageBucket: "minigame-b29f6.firebasestorage.app",
+      messagingSenderId: "257069069470",
+      appId: "1:257069069470:web:fffafdbf39f6914f87778f"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+  </script>
 </head>
 <body>
 
@@ -35,6 +54,8 @@
     <button id="backToMenuBtn">メニューに戻る</button>
   </div>
 
+  <!-- ゲーム本体 -->
   <script src="script.js"></script>
+
 </body>
 </html>
