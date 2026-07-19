@@ -167,3 +167,27 @@ body {
     border-radius: 16px;
   }
 }
+
+#joystick {
+  position: fixed;
+  bottom: 20px;       /* 画面下から20pxの位置 */
+  left: 50%;          /* 画面中央に配置 */
+  transform: translateX(-50%); /* 中央に戻す */
+  width: 120px;
+  height: 120px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 50%;
+  touch-action: none;
+}
+
+#stick {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  background: rgba(255,255,255,0.6);
+  border-radius: 50%;
+  left: 30px;
+  top: 30px;
+}
+
+
