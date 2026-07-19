@@ -4,8 +4,10 @@ const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
 // スマホでもPCでも画面サイズに合わせる
-canvas.width = window.innerWidth * 0.9;
-canvas.height = window.innerHeight * 0.7;
+setTimeout(() => {
+  canvas.width = window.innerWidth * 0.9;
+  canvas.height = window.innerHeight * 0.7;
+}, 200);
 
 // ニックネーム
 let nickname = "";
@@ -86,6 +88,96 @@ let coinInterval = null;
 //フェーズ
 let phase = 1;               // 現在のフェーズ
 let lastPhaseTime = 0;       // 最後にフェーズが進んだ時間
+
+//ジョイスティック
+let joystickEnabled = false;
+let playerVX = 0;
+let playerVY = 0;
+
+//#endregion
+
+
+//#region  ジョイスティック
+const joystick = document.getElementById("joystick");
+const stick = document.getElementById("stick");
+
+let joyActive = false;
+let joyX = 0;
+let joyY = 0;
+
+joystick.addEventListener("touchstart", (e) => {
+  if (!joystickEnabled) return;
+  joyActive = true;
+});
+
+joystick.addEventListener("touchmove", (e) => {
+  if (!joystickEnabled) return;
+  if (!joyActive) return;
+
+  const rect = joystick.getBoundingClientRect();
+  const touch = e.touches[0];
+
+  // ジョイスティック中心からの距離
+  let x = touch.clientX - (rect.left + rect.width / 2);
+  let y = touch.clientY - (rect.top + rect.height / 2);
+
+  // 最大距離を制限（円の外に出ないように）
+  const maxDist = 40;
+  const dist = Math.sqrt(x*x + y*y);
+  if (dist > maxDist) {
+    x = (x / dist) * maxDist;
+    y = (y / dist) * maxDist;
+  }
+
+  // スティックの位置を更新
+  stick.style.left = (60 + x) + "px";
+  stick.style.top = (60 + y) + "px";
+
+  // プレイヤー移動用に保存
+  joyX = x / maxDist;
+  joyY = y / maxDist;
+});
+
+joystick.addEventListener("touchend", () => {
+  if (!joystickEnabled) return
+  joyActive = false;
+  joyX = 0;
+  joyY = 0;
+
+  // スティックを中央に戻す
+  stick.style.left = "30px";
+  stick.style.top = "30px";
+});
+
+function joysticksystem(){
+  if (joyActive) {
+
+    // 倒れ具合の強さ（0〜1）
+    const strength = Math.sqrt(joyX * joyX + joyY * joyY);
+
+    // 最大速度
+    const maxSpeed = 8;
+
+    // 目標速度（スティックの倒れ具合に比例）
+    const targetVX = joyX * maxSpeed * strength;
+    const targetVY = joyY * maxSpeed * strength;
+
+    // ★ 慣性（遅延）を作る：currentSpeed をゆっくり targetSpeed に近づける
+    const smooth = 0.5;  // ← 慣性の強さ（0.1〜0.3がオススメ）
+
+    playerVX += (targetVX - playerVX) * smooth;
+    playerVY += (targetVY - playerVY) * smooth;
+
+    // プレイヤー移動
+    player.x += playerVX;
+    player.y += playerVY;
+
+    // 壁判定
+    player.x = Math.max(player.size / 2, Math.min(canvas.width - player.size / 2, player.x));
+    player.y = Math.max(player.size / 2, Math.min(canvas.height - player.size / 2, player.y));
+  }
+
+}
 
 //#endregion
 
@@ -649,6 +741,8 @@ function gameLoop() {
   draw();
   updateScore();
   Phasejadge();
+  joysticksystem();
+
 //フェーズ1
   if(phase === 1){
     bombSystem();
@@ -674,6 +768,13 @@ function gameLoop() {
 //#region ゲームオーバー
 function gameOver() {
   if (!startTime) return;
+
+  document.getElementById("joystick").style.display = "none";
+  joystickEnabled = false; // ★ジョイスティック無効化
+  joyX = 0;
+  joyY = 0;
+  stick.style.left = "30px";
+  stick.style.top = "30px";
 
   gameLoopId = 0;
   cancelAnimationFrame(gameLoopId);
@@ -759,6 +860,14 @@ document.getElementById("startGameBtn").addEventListener("click", () => {
   nickname = document.getElementById("nickname").value || "名無し";
 
   showScreen("gameScreen");
+  setTimeout(() => {
+  canvas.width = window.innerWidth * 0.9;
+  canvas.height = window.innerHeight * 0.7;
+  }, 200);
+
+  // ★ ゲーム開始時にジョイスティックを表示
+  joystickEnabled = true; // ★ジョイスティック有効化
+  document.getElementById("joystick").style.display = "block";
 
   player = {
   x: canvas.width / 2,
@@ -786,5 +895,9 @@ document.getElementById("startGameBtn").addEventListener("click", () => {
 //#region ランキング 画面
 document.getElementById("backToMenuBtn").addEventListener("click", () => {
   showScreen("menuScreen");
+
+  // ★ メニューに戻ったらジョイスティックを消す
+  joystickEnabled = false; // ★ジョイスティック無効化
+  document.getElementById("joystick").style.display = "none";
 });
 //#endregion
