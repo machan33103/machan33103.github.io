@@ -17,7 +17,7 @@ let player = {
   x: canvas.width / 2,
   y: canvas.height - 50,
   size: 40,
-  color: "orange",
+  color: "cyan",
   invincible: false
 };
 
@@ -873,7 +873,7 @@ document.getElementById("startGameBtn").addEventListener("click", () => {
   x: canvas.width / 2,
   y: canvas.height - 50,
   size: 40,
-  color: "orange",
+  color: "cyan",
   invincible: false
   };
 
