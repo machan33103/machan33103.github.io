@@ -122,7 +122,7 @@ joystick.addEventListener("touchmove", (e) => {
   let y = touch.clientY - (rect.top + rect.height / 2);
 
   // 最大距離を制限（円の外に出ないように）
-  const maxDist = 40;
+  const maxDist = 70;
   const dist = Math.sqrt(x*x + y*y);
   if (dist > maxDist) {
     x = (x / dist) * maxDist;
