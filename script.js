@@ -145,8 +145,8 @@ joystick.addEventListener("touchend", () => {
   joyY = 0;
 
   // スティックを中央に戻す
-  stick.style.left = "30px";
-  stick.style.top = "30px";
+  stick.style.left = "80px";
+  stick.style.top = "80px";
 });
 
 function joysticksystem(){
