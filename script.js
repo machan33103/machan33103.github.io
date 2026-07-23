@@ -680,7 +680,7 @@ if (warningLine) {
     ctx.fillStyle = "white";
 
     const dotSize = 15;
-    const dotSpacing = 120;
+    const dotSpacing = 150;
 
     warningDots = []; // ★毎回リセット（ここはそのままでOK）
 
