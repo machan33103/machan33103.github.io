@@ -17,7 +17,7 @@ let player = {
   x: canvas.width / 2,
   y: canvas.height - 50,
   size: 40,
-  color: "cyan",
+  color: "orange",
   invincible: false
 };
 
@@ -48,40 +48,6 @@ let coinCount = 0;
 let startTime;
 let scoreDisplay = document.getElementById("score");
 
-// タッチ操作
-let touchStartX = null;
-let touchStartY = null;
-
-// スワイプ操作（2次元移動）
-canvas.addEventListener("touchstart", (e) => {
-  touchStartX = e.touches[0].clientX;
-  touchStartY = e.touches[0].clientY;
-});
-
-canvas.addEventListener("touchmove", (e) => {
-  if (touchStartX === null || touchStartY === null) return;
-
-  let currentX = e.touches[0].clientX;
-  let currentY = e.touches[0].clientY;
-
-  let diffX = currentX - touchStartX;
-  let diffY = currentY - touchStartY;
-
-  player.x += diffX * 0.8;
-  player.y += diffY * 0.8;
-
-  player.x = Math.max(player.size / 2, Math.min(canvas.width - player.size / 2, player.x));
-  player.y = Math.max(player.size / 2, Math.min(canvas.height - player.size / 2, player.y));
-
-  touchStartX = currentX;
-  touchStartY = currentY;
-});
-
-canvas.addEventListener("touchend", () => {
-  touchStartX = null;
-  touchStartY = null;
-});
-
 // タイマー
 let coinInterval = null;
 
@@ -93,6 +59,8 @@ let lastPhaseTime = 0;       // 最後にフェーズが進んだ時間
 let joystickEnabled = false;
 let playerVX = 0;
 let playerVY = 0;
+let inputBuffer = [];
+const inputDelayFrames = 5;  // ★遅延フレーム数（5なら約0.08秒）
 
 //#endregion
 
@@ -136,6 +104,17 @@ joystick.addEventListener("touchmove", (e) => {
   // プレイヤー移動用に保存
   joyX = x / maxDist;
   joyY = y / maxDist;
+
+  joyX = Math.pow(Math.abs(joyX), 1.5) * Math.sign(joyX);
+  joyY = Math.pow(Math.abs(joyY), 1.5) * Math.sign(joyY);
+
+
+  // デッドゾーン（感度の下限）
+  const deadZone = 0.15;  // ★15%以下の傾きは無視する
+
+  if (Math.abs(joyX) < deadZone) joyX = 0;
+  if (Math.abs(joyY) < deadZone) joyY = 0;
+
 });
 
 joystick.addEventListener("touchend", () => {
@@ -153,17 +132,17 @@ function joysticksystem(){
   if (joyActive) {
 
     // 倒れ具合の強さ（0〜1）
-    const strength = Math.sqrt(joyX * joyX + joyY * joyY);
+    const strength = Math.sqrt(joyX * joyX + joyY * joyY)*0.7;
 
     // 最大速度
-    const maxSpeed = 8;
+    const maxSpeed = 15;
 
     // 目標速度（スティックの倒れ具合に比例）
     const targetVX = joyX * maxSpeed * strength;
     const targetVY = joyY * maxSpeed * strength;
 
     // ★ 慣性（遅延）を作る：currentSpeed をゆっくり targetSpeed に近づける
-    const smooth = 0.5;  // ← 慣性の強さ（0.1〜0.3がオススメ）
+    const smooth = 1;  // ← 慣性の強さ（0.1〜0.3がオススメ）
 
     playerVX += (targetVX - playerVX) * smooth;
     playerVY += (targetVY - playerVY) * smooth;
@@ -773,8 +752,8 @@ function gameOver() {
   joystickEnabled = false; // ★ジョイスティック無効化
   joyX = 0;
   joyY = 0;
-  stick.style.left = "30px";
-  stick.style.top = "30px";
+  stick.style.left = "80px";
+  stick.style.top = "80px";
 
   gameLoopId = 0;
   cancelAnimationFrame(gameLoopId);
@@ -873,7 +852,7 @@ document.getElementById("startGameBtn").addEventListener("click", () => {
   x: canvas.width / 2,
   y: canvas.height - 50,
   size: 40,
-  color: "cyan",
+  color: "orange",
   invincible: false
   };
 
