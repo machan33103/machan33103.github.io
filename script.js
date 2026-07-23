@@ -592,7 +592,7 @@ function Phasejadge(){
     phase++;
 
     // ★ 第3フェーズが終わったらゲームクリア
-    if (phase === 2) {
+    if (phase === 4) {
       gameClear();
       return;
     }
