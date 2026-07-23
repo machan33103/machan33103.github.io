@@ -850,7 +850,7 @@ document.getElementById("startGameBtn").addEventListener("click", () => {
 
   player = {
   x: canvas.width / 2,
-  y: canvas.height - 50,
+  y: canvas.height / 2,
   size: 40,
   color: "orange",
   invincible: false
