@@ -60,7 +60,7 @@ let joystickEnabled = false;
 let playerVX = 0;
 let playerVY = 0;
 let inputBuffer = [];
-const inputDelayFrames = 5;  // ★遅延フレーム数（5なら約0.08秒）
+const inputDelayFrames = 0;  // ★遅延フレーム数（5なら約0.08秒）
 
 //#endregion
 
@@ -110,7 +110,7 @@ joystick.addEventListener("touchmove", (e) => {
 
 
   // デッドゾーン（感度の下限）
-  const deadZone = 0.15;  // ★15%以下の傾きは無視する
+  const deadZone = 0.20;  // ★20%以下の傾きは無視する
 
   if (Math.abs(joyX) < deadZone) joyX = 0;
   if (Math.abs(joyY) < deadZone) joyY = 0;
@@ -135,7 +135,7 @@ function joysticksystem(){
     const strength = Math.sqrt(joyX * joyX + joyY * joyY)*0.7;
 
     // 最大速度
-    const maxSpeed = 15;
+    const maxSpeed = 10;
 
     // 目標速度（スティックの倒れ具合に比例）
     const targetVX = joyX * maxSpeed * strength;
