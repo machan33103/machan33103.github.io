@@ -109,11 +109,21 @@ joystick.addEventListener("touchmove", (e) => {
   joyY = Math.pow(Math.abs(joyY), 1.5) * Math.sign(joyY);
 
 
-  // デッドゾーン（感度の下限）
-  const deadZone = 0.20;  // ★20%以下の傾きは無視する
+  // プレイヤーの現在速度を計算
+  const speed = Math.sqrt(playerVX * playerVX + playerVY * playerVY);
 
-  if (Math.abs(joyX) < deadZone) joyX = 0;
-  if (Math.abs(joyY) < deadZone) joyY = 0;
+  // ★速度によってデッドゾーンを変える
+  let deadZone;
+  if (speed < 5) {
+      deadZone = 0.05;   // ★スピードが遅いときはデッドゾーン小さく
+  } else {
+      deadZone = 0.20;   // ★通常時のデッドゾーン
+  }
+
+// デッドゾーン適用
+if (Math.abs(joyX) < deadZone) joyX = 0;
+if (Math.abs(joyY) < deadZone) joyY = 0;
+
 
 });
 
@@ -135,7 +145,7 @@ function joysticksystem(){
     const strength = Math.sqrt(joyX * joyX + joyY * joyY)*0.7;
 
     // 最大速度
-    const maxSpeed = 10;
+    const maxSpeed = 12;
 
     // 目標速度（スティックの倒れ具合に比例）
     const targetVX = joyX * maxSpeed * strength;
