@@ -591,6 +591,12 @@ function Phasejadge(){
   if (now - lastPhaseTime > 30000) {  // 30秒経過
     phase++;
 
+    // ★ 第3フェーズが終わったらゲームクリア
+    if (phase === 2) {
+      gameClear();
+      return;
+    }
+
     showPhaseMessage(`第${phase - 1}フェーズクリア！`);
     setTimeout(() => {
       showPhaseMessage(`第${phase}フェーズ開始！`);
@@ -674,7 +680,7 @@ if (warningLine) {
     ctx.fillStyle = "white";
 
     const dotSize = 15;
-    const dotSpacing = 100;
+    const dotSpacing = 120;
 
     warningDots = []; // ★毎回リセット（ここはそのままでOK）
 
@@ -889,4 +895,65 @@ document.getElementById("backToMenuBtn").addEventListener("click", () => {
   joystickEnabled = false; // ★ジョイスティック無効化
   document.getElementById("joystick").style.display = "none";
 });
+//#endregion
+
+
+//#region ゲームクリア
+function gameClear() {
+
+  document.getElementById("joystick").style.display = "none";
+  joystickEnabled = false;
+  joyX = 0;
+  joyY = 0;
+  stick.style.left = "80px";
+  stick.style.top = "80px";
+
+  gameLoopId = 0;
+  cancelAnimationFrame(gameLoopId);
+  clearInterval(coinInterval);
+  player.invincible = true;
+
+  bombs = [];
+  coins = [];
+  warningDots = [];
+  highSpeedWarnings = []; 
+  lastHighSpeedSpawn = 0;
+  highSpeedSpawnRate = 1000;
+  lastBombSpawn = 0;
+  lastBombSpeedUp = 0;
+  lasthighSpeedUP = 0
+  BombspawnRate = 800;
+  lastBombing = 0;
+  lastBombSpeedUp = 0;
+  BombingspawnRate = 2000;
+
+  let now = Date.now();
+  let seconds = Math.floor((now - startTime) / 1000);
+  let finalScore = seconds * coinCount;
+
+  saveScore(finalScore);
+
+  const overlay = document.createElement("div");
+  overlay.id = "gameClearOverlay";
+  overlay.innerHTML = `
+    <div class="game-over-box">
+      <h2>ゲームクリア！</h2>
+      <p>おめでとう！</p>
+      <button id="restartBtn">もう一度プレイ</button>
+      <button id="backMenuBtn">メニューに戻る</button>
+    </div>
+  `;
+  
+  document.body.appendChild(overlay);
+
+  document.getElementById("restartBtn").addEventListener("click", () => {
+    document.getElementById("gameClearOverlay").remove();
+    showScreen("nameScreen");
+  });
+
+  document.getElementById("backMenuBtn").addEventListener("click", () => {
+    location.reload();
+  });
+}
+
 //#endregion
