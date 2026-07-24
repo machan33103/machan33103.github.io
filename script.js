@@ -40,6 +40,12 @@ let lastHighSpeedSpawn = 0;
 let highSpeedSpawnRate = 1000; // 高速爆撃の発生間隔
 let lasthighSpeedUP = 0; //最後に生成速度が速くなった時間
 
+// 花火爆弾
+let fireworkWarnings = [];  // {x, y, createdAt}
+let lastFireworkSpawn = 0;
+let lastFireworkSpeedUP =0;
+let fireworkSpawnRate = 2000; // 発生間隔（調整可）
+
 // コイン設定
 let coins = [];
 let coinCount = 0;
@@ -54,6 +60,7 @@ let coinInterval = null;
 //フェーズ
 let phase = 1;               // 現在のフェーズ
 let lastPhaseTime = 0;       // 最後にフェーズが進んだ時間
+let phasePause = false;   // ★フェーズ切り替え中は爆弾・コイン停止
 
 //ジョイスティック
 let joystickEnabled = false;
@@ -62,6 +69,30 @@ let playerVY = 0;
 let inputBuffer = [];
 const inputDelayFrames = 0;  // ★遅延フレーム数（5なら約0.08秒）
 
+//#endregion
+
+
+//#region リセット
+function Reset(){
+
+  bombs = [];
+  coins = [];
+  warningDots = [];
+  highSpeedWarnings = []; 
+  fireworkWarnings = []
+  lastHighSpeedSpawn = 0;
+  highSpeedSpawnRate = 1000;
+  lastBombSpawn = 0;
+  lastBombSpeedUp = 0;
+  lasthighSpeedUP = 0
+  BombspawnRate = 800;
+  lastBombing = 0;
+  lastBombSpeedUp = 0;
+  BombingspawnRate = 2000;
+  ireworkSpawnRate = 2000;
+  lastFireworkSpawn = 0;
+  lastFireworkSpeedUP =0;
+}
 //#endregion
 
 
@@ -211,9 +242,40 @@ function updateScore() {
 //#endregion
 
 
+//#region 爆弾当たり判定
+function Hitjudgmentsystem(){
+// 爆弾の移動と当たり判定
+  for (let bomb of bombs) {
+    bomb.x += bomb.vx * bomb.speed;
+    bomb.y += bomb.vy * bomb.speed;
+
+    if (
+      !player.invincible &&
+      Math.abs(bomb.x - player.x) < (bomb.size + 0.9 * player.size) / 2 &&
+      Math.abs(bomb.y - player.y) < (bomb.size + 0.9 * player.size) / 2
+    ) {
+      gameOver();
+      return;
+    }
+  }
+
+  // ★ ④ 画面外の爆弾を削除
+  bombs = bombs.filter(b =>
+    b.x > -50 &&
+    b.x < canvas.width + 50 &&
+    b.y > -50 &&
+    b.y < canvas.height + 50
+  );
+
+}
+//#endregion
+
+
 //#region 爆弾system
 
 function bombSystem() {
+
+  if (phasePause) return;
 
   // 爆弾生成
   function spawnBombTop() {
@@ -283,29 +345,6 @@ function bombSystem() {
     }
   }
 
-  // 爆弾の移動と当たり判定
-  for (let bomb of bombs) {
-    bomb.x += bomb.vx * bomb.speed;
-    bomb.y += bomb.vy * bomb.speed;
-
-    if (
-      !player.invincible &&
-      Math.abs(bomb.x - player.x) < (bomb.size + 0.9 * player.size) / 2 &&
-      Math.abs(bomb.y - player.y) < (bomb.size + 0.9 * player.size) / 2
-    ) {
-      gameOver();
-      return;
-    }
-  }
-
-  // ★ ④ 画面外の爆弾を削除
-  bombs = bombs.filter(b =>
-    b.x > -50 &&
-    b.x < canvas.width + 50 &&
-    b.y > -50 &&
-    b.y < canvas.height + 50
-  );
-
 }
 //#endregion
 
@@ -313,6 +352,9 @@ function bombSystem() {
 //#region 直線爆撃system
 
 function LineBombingsystem() {
+
+  if (phasePause) return;
+
   // 50%で横、50%で縦
   const isHorizontal = Math.random() < 0.5;
 
@@ -376,20 +418,6 @@ function LineBombingsystem() {
     }
   }
 
-  // 爆弾の移動と当たり判定
-  for (let bomb of bombs) {
-    bomb.x += bomb.vx * bomb.speed;
-    bomb.y += bomb.vy * bomb.speed;
-
-    if (
-      !player.invincible &&
-      Math.abs(bomb.x - player.x) < (bomb.size + 0.9 * player.size) / 2 &&
-      Math.abs(bomb.y - player.y) < (bomb.size + 0.9 * player.size) / 2
-    ) {
-      gameOver();
-      return;
-    }
-  } 
 }
 
 //#endregion
@@ -397,6 +425,8 @@ function LineBombingsystem() {
 
 //#region 高速爆弾system
 function HighSpeedBombSystem() {
+
+  if (phasePause) return;
 
   // ★ ① 高速爆撃の予告線を生成
   if (Date.now() - lastHighSpeedSpawn > highSpeedSpawnRate) {
@@ -499,21 +529,78 @@ function HighSpeedBombSystem() {
     }
   }
 
-  // 爆弾の移動と当たり判定
-  for (let bomb of bombs) {
-    bomb.x += bomb.vx * bomb.speed;
-    bomb.y += bomb.vy * bomb.speed;
+}
 
-    if (
-      !player.invincible &&
-      Math.abs(bomb.x - player.x) < (bomb.size + 0.9 * player.size) / 2 &&
-      Math.abs(bomb.y - player.y) < (bomb.size + 0.9 * player.size) / 2
-    ) {
-      gameOver();
-      return;
+//#endregion
+
+
+//#region 花火爆弾system
+function FireworkBombSystem() {
+
+  if (phasePause) return;
+
+  // ★ ① ランダム位置に予告点を出す
+  if (Date.now() - lastFireworkSpawn > fireworkSpawnRate) {
+
+    const margin = 80;
+    const x = margin + Math.random() * (canvas.width - margin * 2);
+    const y = margin + Math.random() * (canvas.height - margin * 2);
+
+    fireworkWarnings.push({
+      x: x,
+      y: y,
+      createdAt: Date.now()
+    });
+
+    lastFireworkSpawn = Date.now();
+  }
+
+  // ★ ② 1秒後に爆弾を16方向へ発射
+  fireworkWarnings = fireworkWarnings.filter(warn => {
+
+    if (Date.now() - warn.createdAt > 1000) {
+
+      const speed = 6;
+      const size = 25;
+
+     // ★ 16方向（360°を22.5°ずつ分割）
+      const directions = [];
+      for (let i = 0; i < 16; i++) {
+        const angle = (Math.PI * 2 / 16) * i;
+        directions.push({
+         vx: Math.cos(angle),
+          vy: Math.sin(angle)
+        });
+      }
+
+      // 爆弾生成
+      for (let d of directions) {
+        bombs.push({
+          x: warn.x,
+          y: warn.y,
+          size: size,
+          color: "red",
+          speed: speed,
+          vx: d.vx,
+          vy: d.vy
+        });
+      }
+
+      return false; // 予告点削除
     }
-  } 
 
+    return true;
+  });
+
+  // 花火爆弾の変化（5秒ごとに速くする）
+  if (!player.invincible) {  // ゲームオーバー中は加速しない
+    if (Date.now() - lastFireworkSpeedUP > 5000) {
+      if (highSpeedSpawnRate > 1000) {
+        highSpeedSpawnRate -= 150;
+      }
+      lasthighSpeedUP = Date.now(); // 次の5秒カウント開始
+    }
+  }
 }
 
 //#endregion
@@ -522,6 +609,8 @@ function HighSpeedBombSystem() {
 //#region コインsystem
 // コイン生成
 function spawnCoin() {
+
+  if (phasePause) return;
 
   const margin = 50; // 端から50pxは避ける
 
@@ -592,29 +681,24 @@ function Phasejadge(){
     phase++;
 
     // ★ 第3フェーズが終わったらゲームクリア
-    if (phase === 4) {
+    if (phase === 5) {
       gameClear();
       return;
     }
+
+    // ★ フェーズ切り替え中は爆弾・コイン停止
+    phasePause = true;
+    setTimeout(() => {
+      phasePause = false;
+    }, 1000);  // ★1秒停止
 
     showPhaseMessage(`第${phase - 1}フェーズクリア！`);
     setTimeout(() => {
       showPhaseMessage(`第${phase}フェーズ開始！`);
     }, 1500);
   
-    lastBombSpawn = 0;
-    lastBombSpeedUp = 0;
-    BombspawnRate = 800;
-    lastBombing = 0;
-    lastBombSpeedUp = 0;
-    lasthighSpeedUP = 0
-    BombingspawnRate = 2000;
-    highSpeedWarnings = []; 
-    lastHighSpeedSpawn = 0;
-    highSpeedSpawnRate = 1000;  
-    bombs = [];
-    coins = [];
-    warningDots = [];
+    Reset();
+
     lastPhaseTime = now;
   }
 }
@@ -630,6 +714,19 @@ function draw() {
   ctx.beginPath();
   ctx.arc(player.x, player.y, player.size / 2, 0, Math.PI * 2);
   ctx.fill();
+
+  // 花火爆弾の予告点（点滅）
+  for (let warn of fireworkWarnings) {
+
+    if (Math.floor(Date.now() / 200) % 2 === 0) continue;
+
+    ctx.save();
+    ctx.fillStyle = "white";
+    ctx.beginPath();
+    ctx.arc(warn.x, warn.y, 15, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
 
   // 高速爆弾予告線の描画（点滅＋矢印）
   for (let warn of highSpeedWarnings) {
@@ -680,7 +777,7 @@ if (warningLine) {
     ctx.fillStyle = "white";
 
     const dotSize = 15;
-    const dotSpacing = 150;
+    const dotSpacing = 120;
 
     warningDots = []; // ★毎回リセット（ここはそのままでOK）
 
@@ -741,18 +838,26 @@ function gameLoop() {
 //フェーズ1
   if(phase === 1){
     bombSystem();
+    Hitjudgmentsystem();
   }
 
 //フェーズ2
   if(phase === 2){
     LineBombingsystem();
+    Hitjudgmentsystem();
   }
 
 //フェーズ3
   if(phase === 3){
     HighSpeedBombSystem();
+    Hitjudgmentsystem();
   }
-  
+//フェーズ4
+  if(phase === 4){
+    FireworkBombSystem();
+    Hitjudgmentsystem();
+  }  
+
   if(gameLoopId === 1){
     requestAnimationFrame(gameLoop);
   }
@@ -765,29 +870,18 @@ function gameOver() {
   if (!startTime) return;
 
   document.getElementById("joystick").style.display = "none";
-  joystickEnabled = false; // ★ジョイスティック無効化
+  joystickEnabled = false;
   joyX = 0;
   joyY = 0;
   stick.style.left = "80px";
   stick.style.top = "80px";
 
+  Reset();
+
   gameLoopId = 0;
   cancelAnimationFrame(gameLoopId);
   clearInterval(coinInterval);
   player.invincible = true;
-  bombs = [];
-  coins = [];
-  warningDots = [];
-  highSpeedWarnings = []; 
-  lastHighSpeedSpawn = 0;
-  highSpeedSpawnRate = 1000;
-  lastBombSpawn = 0;
-  lastBombSpeedUp = 0;
-  lasthighSpeedUP = 0
-  BombspawnRate = 800;
-  lastBombing = 0;
-  lastBombSpeedUp = 0;
-  BombingspawnRate = 2000;
 
   let now = Date.now();
   let seconds = Math.floor((now - startTime) / 1000);
@@ -900,7 +994,6 @@ document.getElementById("backToMenuBtn").addEventListener("click", () => {
 
 //#region ゲームクリア
 function gameClear() {
-
   document.getElementById("joystick").style.display = "none";
   joystickEnabled = false;
   joyX = 0;
@@ -908,24 +1001,12 @@ function gameClear() {
   stick.style.left = "80px";
   stick.style.top = "80px";
 
+  Reset();
+
   gameLoopId = 0;
   cancelAnimationFrame(gameLoopId);
   clearInterval(coinInterval);
   player.invincible = true;
-
-  bombs = [];
-  coins = [];
-  warningDots = [];
-  highSpeedWarnings = []; 
-  lastHighSpeedSpawn = 0;
-  highSpeedSpawnRate = 1000;
-  lastBombSpawn = 0;
-  lastBombSpeedUp = 0;
-  lasthighSpeedUP = 0
-  BombspawnRate = 800;
-  lastBombing = 0;
-  lastBombSpeedUp = 0;
-  BombingspawnRate = 2000;
 
   let now = Date.now();
   let seconds = Math.floor((now - startTime) / 1000);
@@ -957,3 +1038,4 @@ function gameClear() {
 }
 
 //#endregion
+
